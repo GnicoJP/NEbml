@@ -56,7 +56,7 @@ namespace NEbml.Core
 		/// <param name="source">the source of bytes</param>
 		/// <param name="size">the maximum number of bytes to read from the source</param>
 		/// <exception cref="ArgumentNullException">if <code>source</code> is <code>null</code></exception>
-		/// <exception cref="ArgumentNullException">if <code>size</code> is negative</exception>
+		/// <exception cref="ArgumentException">if <code>size</code> is negative</exception>
 		public EbmlReader(Stream source, long size)
 		{
 			if (source == null) throw new ArgumentNullException("source");

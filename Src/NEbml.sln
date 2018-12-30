@@ -1,6 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28407.52
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Supplementary", "Supplementary", "{E04FAEF2-DE81-416F-8E0E-8172178962E7}"
 	ProjectSection(SolutionItems) = preProject
 		..\.gitignore = ..\.gitignore
@@ -18,6 +20,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{D06B00
 		.nuget\NuGet.targets = .nuget\NuGet.targets
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test", "Tests\Test.csproj", "{F9805471-6D0E-401B-AFF5-6742EFE6B094}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -32,9 +36,16 @@ Global
 		{38D51CF9-B33C-434F-9E5C-44B2F8C652F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{38D51CF9-B33C-434F-9E5C-44B2F8C652F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{38D51CF9-B33C-434F-9E5C-44B2F8C652F2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F9805471-6D0E-401B-AFF5-6742EFE6B094}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F9805471-6D0E-401B-AFF5-6742EFE6B094}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F9805471-6D0E-401B-AFF5-6742EFE6B094}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F9805471-6D0E-401B-AFF5-6742EFE6B094}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {579BFDDD-CDE4-42E8-9E5D-3B1332561183}
 	EndGlobalSection
 	GlobalSection(MercurialSourceControlSolutionProperties) = preSolution
 		SolutionIsControlled = True
