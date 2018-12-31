@@ -300,7 +300,7 @@ namespace NEbml.Core
 		/// <param name="offset">the start offset in <code>buffer</code> at which the data is written</param>
 		/// <param name="length">the maximum number of bytes to read</param>
 		/// <returns>the actual number of bytes read, or <code>-1</code> if the end of the element data is reached</returns>
-		public int ReadBinary(byte[] buffer, int offset, int length)
+		public int ReadBinary(Span<byte> buffer)
 		{
 			if (_element.HasInvalidIdentifier || _element.Type != ElementType.None && _element.Type != ElementType.Binary)
 			{
@@ -311,7 +311,7 @@ namespace NEbml.Core
 			{
 				return -1;
 			}
-			int r = _source.ReadFully(buffer, offset, (int) Math.Min(_element.Remaining, length));
+			int r = _source.ReadFully(buffer.Slice(0, (int) Math.Min(_element.Remaining, buffer.Length)));
 			if (r < 0)
 			{
 				throw new EndOfStreamException();
@@ -348,7 +348,7 @@ namespace NEbml.Core
 		private byte[] FillBuffer(int length)
 		{
 			byte[] buffer = GetSharedBuffer(length);
-			ReadFully(buffer, 0, length);
+			ReadFully(buffer.AsSpan(0, length));
 
 			return buffer;
 		}
@@ -357,23 +357,21 @@ namespace NEbml.Core
 		/// Reads <code>length</code> bytes of data from the current element data into an array of bytes.
 		/// </summary>
 		/// <param name="buffer">the buffer into which the data is read</param>
-		/// <param name="offset">the start offset in array <code>buffer</code> at which the data is written</param>
-		/// <param name="length">the number of bytes to read</param>
-		private void ReadFully(byte[] buffer, int offset, int length)
+		private void ReadFully(Span<byte> buffer)
 		{
-			if (_element.Remaining < length)
+            Span<byte> _buffer = buffer;
+			if (_element.Remaining < buffer.Length)
 			{
 				throw new EndOfStreamException();
 			}
-			while (length > 0)
+			while (_buffer.Length > 0)
 			{
-				int r = _source.ReadFully(buffer, offset, length);
+				int r = _source.ReadFully(_buffer);
 				if (r < 0)
 				{
 					throw new EndOfStreamException();
 				}
-				offset += r;
-				length -= r;
+                _buffer = _buffer.Slice(r);
 				_element.Remaining -= r;
 			}
 		}
@@ -401,7 +399,7 @@ namespace NEbml.Core
 			while (length > 0L)
 			{
 				var buffer = GetSharedBuffer(2048);
-				var r = _source.ReadFully(buffer, 0, (int) Math.Min(length, buffer.Length));
+				var r = _source.ReadFully(buffer.AsSpan(0, (int) Math.Min(length, buffer.Length)));
 				if (r < 0)
 				{
 					throw new EndOfStreamException();
@@ -420,7 +418,7 @@ namespace NEbml.Core
 		/// <exception cref="IOException">if an I/O error has occurred</exception>
 		private VInt ReadVarInt(int maxLength)
 		{
-			var value = VInt.Read(_source, maxLength, GetSharedBuffer(maxLength));
+			var value = VInt.Read(_source, maxLength);
 			if (_element.Remaining < value.Length)
 				throw new EbmlDataFormatException();
 

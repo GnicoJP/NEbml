@@ -192,11 +192,12 @@ namespace NEbml.Core
 		/// <param name="maxLength">Maximal expected length (either 4 or 8)</param>
 		/// <param name="buffer">The buffer for optimization purposes. Must match the maxlength</param>
 		/// <returns></returns>
-		public static VInt Read(Stream source, int maxLength, byte[] buffer)
+		public static VInt Read(Stream source, int maxLength)
 		{
-			buffer = buffer ?? new byte[maxLength];
+            Span<byte> buffer = stackalloc byte[8];
+            buffer.Clear();
 
-			if (source.ReadFully(buffer, 0, 1) == 0)
+			if (source.ReadFully(buffer.Slice(0, 1)) == 0)
 			{
 				throw new EndOfStreamException();
 			}
@@ -212,7 +213,7 @@ namespace NEbml.Core
 			if (extraBytes + 1 > maxLength)
 				throw new EbmlDataFormatException(string.Format("Expected VInt with a max length of {0}. Got {1}", maxLength, extraBytes + 1));
 
-			if (source.ReadFully(buffer, 1, extraBytes) != extraBytes)
+			if (source.ReadFully(buffer.Slice(1, extraBytes)) != extraBytes)
 			{
 				throw new EndOfStreamException();
 			}
@@ -233,7 +234,8 @@ namespace NEbml.Core
 		{
 			if (stream == null) throw new ArgumentNullException("stream");
 
-			var buffer = new byte[Length];
+            Span<byte> buffer = stackalloc byte[8];
+            buffer = buffer.Slice(0, Length);
 
 			int p = Length;
 			for (var data = EncodedValue; --p >= 0; data >>= 8)
@@ -241,28 +243,28 @@ namespace NEbml.Core
 				buffer[p] = (byte)(data & 0xff);
 			}
 
-			stream.Write(buffer, 0, buffer.Length);
+			stream.Write(buffer);
 			return buffer.Length;
 		}
 
-		private static readonly sbyte[] ExtraBytesSize =
-		{ 4, 3, 2, 2, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0 };
+		private static ReadOnlySpan<sbyte> ExtraBytesSize => 
+            new sbyte[] { 4, 3, 2, 2, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0 };
 
 		/// <summary>
 		/// Maps length to data bits mask
 		/// </summary>
-		private static readonly ulong[] DataBitsMask = 
-		{
-			(1L << 0) - 1,
-			(1L << 7) - 1,
-			(1L << 14) - 1,
-			(1L << 21) - 1,
-			(1L << 28) - 1,
-			(1L << 35) - 1,
-			(1L << 42) - 1,
-			(1L << 49) - 1,
-			(1L << 56) - 1
-		};
+		private static ReadOnlySpan<ulong> DataBitsMask => new ulong[]
+		    {
+			    (1L << 0) - 1,
+			    (1L << 7) - 1,
+			    (1L << 14) - 1,
+			    (1L << 21) - 1,
+			    (1L << 28) - 1,
+			    (1L << 35) - 1,
+			    (1L << 42) - 1,
+			    (1L << 49) - 1,
+			    (1L << 56) - 1
+		    };
 
 		private const ulong MaxValue = (1L << 56) - 1;
 		/// <summary>

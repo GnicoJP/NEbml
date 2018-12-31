@@ -1,6 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netcoreapp3.0</TargetFramework>
+    <Description>Original : The MIT License (MIT) Copyright (c) 2014 OlegZee</Description>
+    <Authors>GnicoJP</Authors>
+    <LangVersion>7.2</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <Folder Include="Properties\" />

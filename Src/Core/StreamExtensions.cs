@@ -1,21 +1,24 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 
 namespace NEbml.Core
 {
 	public static class StreamExtensions
 	{
-		public static int ReadFully(this Stream stream, byte[] buffer, int offset, int count)
-		{
-			int bytesRead = 0;
-			int totalBytesRead = 0;
+        public static int ReadFully(this Stream stream, Span<byte> buffer)
+        {
+            int bytesRead = 0;
+            int totalBytesRead = 0;
+            Span<byte> _buffer;
 
-			do
-			{
-				bytesRead = stream.Read(buffer, offset + totalBytesRead, count - totalBytesRead);
-				totalBytesRead += bytesRead;
-			} while (bytesRead > 0 && totalBytesRead < count);
+            do
+            {
+                _buffer = buffer.Slice(totalBytesRead, totalBytesRead);
+                bytesRead = stream.Read(_buffer);
+                totalBytesRead += bytesRead;
+            } while (bytesRead > 0 && totalBytesRead < buffer.Length);
 
-			return totalBytesRead;
-		}
-	}
+            return totalBytesRead;
+        }
+    }
 }
